@@ -6,6 +6,7 @@ var playState = {
         {x: 120, y: 280}, {x: 680, y: 280},
         {x: 120, y: 440}, {x: 680, y: 440}
     ],
+    typed: "",
     create: function() {
         this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -33,6 +34,8 @@ var playState = {
 
         this.scoreLabel = game.add.text(30, 30, 'score: 0', { font: '24px Arial', fill: '#ffffff' });
         game.global.score = 0;
+
+        this.levelLabel = game.add.text(30, 60, "level: " + this.level, { font: '24px Arial', fill: '#ffffff' });
 
         this.jumpSound = game.add.audio('jump');
         this.coinSound = game.add.audio('coin');
@@ -64,6 +67,15 @@ var playState = {
         if (!game.device.desktop) {
             // Display the mobile inputs
             this.addMobileInputs();
+        }
+
+        game.input.keyboard.onUpCallback = this.checkCheats;
+    },
+    checkCheats: function(key) {
+        playState.typed += String.fromCharCode(key.keyCode);
+        playState.typed = playState.typed.substring(playState.typed.length - 4, playState.typed.length);
+        if (playState.typed == "HELP") {
+            playState.enemies.forEachAlive(function(enemy) { enemy.kill(); });
         }
     },
     addMobileInputs: function() {
@@ -111,6 +123,7 @@ var playState = {
         this.layer = this.map.createLayer('Level ' + this.level);
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
+        this.levelLabel.setText("Level " + this.level);
     },
     addEnemy: function() {
         var enemy = this.enemies.getFirstDead();
