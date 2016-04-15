@@ -5,3 +5,5 @@ This is the repository for the Super Coin Box game built following the Discover 
 Press the up key to jump, left and right to move left and right respectively, avoid the red boxes, and collect the yellow coins!
 
 Play the game [here](http://thecodingwizard.github.io/super-coin-box/).
+
+Not complete.
