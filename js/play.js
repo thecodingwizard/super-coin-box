@@ -8,11 +8,10 @@ var playState = {
     ],
     typed: "",
     lives: 3,
-    score: 0,
     create: function() {
         this.level = 1;
         this.lives = 3;
-        this.score = 0;
+        game.global.score = 0;
 
         this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -39,10 +38,11 @@ var playState = {
         // game.add.sprite(680, 440, 'coin');
 
         this.scoreLabel = game.add.text(30, 30, 'Score: 0', { font: '24px Arial', fill: '#ffffff' });
-        this.score = 0;
+        game.global.score = 0;
 
         this.levelLabel = game.add.text(30, 60, "Level " + this.level, { font: '24px Arial', fill: '#ffffff' });
         this.livesLabel = game.add.text(30, 90, "Lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
+        this.coinsLabel = game.add.text(30, 120, "Coins: " + game.global.coins, { font: '24px Arial', fill: '#ffffff' });
 
         this.jumpSound = game.add.audio('jump');
         this.coinSound = game.add.audio('coin');
@@ -78,6 +78,17 @@ var playState = {
         }
 
         game.input.keyboard.onUpCallback = this.checkCheats;
+
+        this.muteButton = game.add.button(game.world.width - 40, 40, 'mute', this.toggleSound, this);
+        this.muteButton.input.useHandCursor = true;
+        this.muteButton.anchor.setTo(1, 0);
+        if (game.sound.mute) {
+            this.muteButton.frame = 1;
+        }
+    },
+    toggleSound: function() {
+        game.sound.mute = ! game.sound.mute;
+        this.muteButton.frame = game.sound.mute ? 1 : 0;
     },
     checkCheats: function(key) {
         playState.typed += String.fromCharCode(key.keyCode);
@@ -94,7 +105,7 @@ var playState = {
         }
     },
     checkLevelUp: function() {
-        if (this.score % 50 == 0) {
+        if (game.global.score % 50 == 0) {
             this.levelUp();
         }
     },
@@ -158,7 +169,7 @@ var playState = {
         if (!enemy) return;
         enemy.anchor.setTo(0.5, 1);
         enemy.reset(game.world.centerX, 0);
-        if (Phaser.Utils.chanceRoll(Math.min(10 + this.score/2.5, 50))) {
+        if (Phaser.Utils.chanceRoll(Math.min(10 + game.global.score/2.5, 50))) {
             // spawn hard enemy!
             enemy.scale.setTo(1.3, 1.3);
             enemy.body.gravity.y = 700;
@@ -184,7 +195,7 @@ var playState = {
 
         if (this.nextEnemy < game.time.now) {
             var start = 4000, end = 1000, score = 100;
-            var delay = Math.max(start - (start-end)*this.score/score, end);
+            var delay = Math.max(start - (start-end)*game.global.score/score, end);
             if (this.level == 3) {
                 delay = 500;
             }
@@ -208,12 +219,15 @@ var playState = {
         }
     },
     takeCoin: function(player, coin) {
-        this.score += 5;
-        this.scoreLabel.text = 'Score: ' + this.score;
+        game.global.score += 5;
+        game.global.coins++;
+        this.scoreLabel.text = 'Score: ' + game.global.score;
+        this.coinsLabel.text = "Coins: " + game.global.coins;
+        window.localStorage.coins = game.global.coins;
         this.coinSound.play();
         this.updateCoinPosition();
 
-        if (this.score % 50 == 0) {
+        if (game.global.score % 50 == 0) {
             this.levelUp();
         }
 
@@ -237,21 +251,21 @@ var playState = {
         if (!this.player.alive) {
             return;
         }
+        this.lives--;
+        this.enemies.forEachAlive(function(enemy) { enemy.kill(); });
+        this.livesLabel.setText("Lives: " + this.lives);
         this.player.kill();
         this.emitter.x = this.player.x;
         this.emitter.y = this.player.y;
         this.emitter.start(true, 600, null, 15);
         this.deadSound.play();
-        if (this.lives <= 1) {
+        if (this.lives < 1) {
             this.music.stop();
             game.time.events.add(1000, this.startMenu, this);
         } else {
-            this.lives--;
-            this.enemies.forEachAlive(function(enemy) { enemy.kill(); });
             game.time.events.add(1000, function() {
                 this.player.reset(game.world.centerX, game.world.centerY);
             }, this);
-            this.livesLabel.setText("Lives: " + this.lives);
         }
     },
     jumpPlayer: function() {

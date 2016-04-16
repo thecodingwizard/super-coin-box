@@ -24,6 +24,7 @@ var loadState = {
         game.load.image('jumpButton', 'assets/jumpButton.png');
         game.load.image('rightButton', 'assets/rightButton.png');
         game.load.image('leftButton', 'assets/leftButton.png');
+        game.load.image('backButton', 'assets/back.png');
     },
     create: function() {
         game.state.start('menu');

@@ -40,7 +40,18 @@ var menuState = {
             this.muteButton.frame = 1;
         }
 
+        var shopText = game.device.desktop ? "Press the Down Arrow key to shop" : "Tap to shop";
+        this.shopButton = game.add.text(game.world.centerX, game.world.height - 200, shopText, { font: "36px Arial", fill: "#ffffff" });
+        this.shopButton.anchor.setTo(0.5, 0.5);
+        this.shopButton.inputEnabled = true;
+        this.shopButton.events.onInputDown.addOnce(this.shop, this);
+        var downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+        downKey.onDown.addOnce(this.shop, this);
+
         background.events.onInputDown.add(this.start, this);
+    },
+    shop: function() {
+        game.state.start("shop");
     },
     toggleSound: function() {
         game.sound.mute = ! game.sound.mute;
