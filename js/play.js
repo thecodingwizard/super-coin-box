@@ -10,6 +10,10 @@ var playState = {
     lives: 3,
     score: 0,
     create: function() {
+        this.level = 1;
+        this.lives = 3;
+        this.score = 0;
+
         this.cursor = game.input.keyboard.createCursorKeys();
 
         this.player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
@@ -81,7 +85,7 @@ var playState = {
         if (playState.typed.indexOf("HELP") != -1) {
             playState.enemies.forEachAlive(function(enemy) { enemy.kill(); });
         } else if (playState.typed.indexOf("MORE") != -1) {
-            playState.score += 10;
+            playState.score += 100;
             playState.checkLevelUp();
             playState.scoreLabel.setText("Score: " + playState.score);
         } else if (playState.typed.indexOf("LIVE") != -1) {
@@ -126,8 +130,7 @@ var playState = {
         this.map = game.add.tilemap('map');
         this.map.addTilesetImage('tileset');
         this.layer = this.map.createLayer('Level ' + this.level);
-        this.layer.resizeWorld();
-        this.map.setCollision(1);
+        this.setupMap();
     },
     levelUp: function() {
         this.lives++;
@@ -139,9 +142,16 @@ var playState = {
         this.player.x = game.world.centerX;
         this.player.y = game.world.centerY;
         this.layer = this.map.createLayer('Level ' + this.level);
+        this.setupMap();
+        this.levelLabel.setText("Level " + this.level);
+    },
+    setupMap: function() {
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
-        this.levelLabel.setText("Level " + this.level);
+        this.map.setTileIndexCallback(2, this.collidedWithRed, this, this.layer);
+    },
+    collidedWithRed: function(sprite) {
+        if (sprite == this.player) this.playerDie();
     },
     addEnemy: function() {
         var enemy = this.enemies.getFirstDead();
@@ -241,7 +251,7 @@ var playState = {
             game.time.events.add(1000, function() {
                 this.player.reset(game.world.centerX, game.world.centerY);
             }, this);
-            this.livesLabel.setText("lives: " + this.lives);
+            this.livesLabel.setText("Lives: " + this.lives);
         }
     },
     jumpPlayer: function() {
