@@ -6,4 +6,4 @@ Press the up key to jump, left and right to move left and right respectively, av
 
 Play the game [here](http://thecodingwizard.github.io/super-coin-box/).
 
-Not complete.
+PS: Yes, there are cheats. And if you are desperate enough, here&apos;s a hint: In chrome, type Ctrl+I.
