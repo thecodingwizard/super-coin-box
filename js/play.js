@@ -8,6 +8,7 @@ var playState = {
     ],
     typed: "",
     lives: 3,
+    score: 0,
     create: function() {
         this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -33,11 +34,11 @@ var playState = {
         // game.add.sprite(120, 440, 'coin');
         // game.add.sprite(680, 440, 'coin');
 
-        this.scoreLabel = game.add.text(30, 30, 'score: 0', { font: '24px Arial', fill: '#ffffff' });
-        game.global.score = 0;
+        this.scoreLabel = game.add.text(30, 30, 'Score: 0', { font: '24px Arial', fill: '#ffffff' });
+        this.score = 0;
 
-        this.levelLabel = game.add.text(30, 60, "level: " + this.level, { font: '24px Arial', fill: '#ffffff' });
-        this.livesLabel = game.add.text(30, 90, "lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
+        this.levelLabel = game.add.text(30, 60, "Level " + this.level, { font: '24px Arial', fill: '#ffffff' });
+        this.livesLabel = game.add.text(30, 90, "Lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
 
         this.jumpSound = game.add.audio('jump');
         this.coinSound = game.add.audio('coin');
@@ -77,8 +78,20 @@ var playState = {
     checkCheats: function(key) {
         playState.typed += String.fromCharCode(key.keyCode);
         playState.typed = playState.typed.substring(playState.typed.length - 4, playState.typed.length);
-        if (playState.typed == "HELP") {
+        if (playState.typed.indexOf("HELP") != -1) {
             playState.enemies.forEachAlive(function(enemy) { enemy.kill(); });
+        } else if (playState.typed.indexOf("MORE") != -1) {
+            playState.score += 10;
+            playState.checkLevelUp();
+            playState.scoreLabel.setText("Score: " + playState.score);
+        } else if (playState.typed.indexOf("LIVE") != -1) {
+            playState.lives++;
+            playState.livesLabel.setText("Lives: " + playState.lives);
+        }
+    },
+    checkLevelUp: function() {
+        if (this.score % 50 == 0) {
+            this.levelUp();
         }
     },
     addMobileInputs: function() {
@@ -127,6 +140,8 @@ var playState = {
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
         this.levelLabel.setText("Level " + this.level);
+        this.lives++;
+        this.livesLabel.setText("Lives: " + this.lives);
     },
     addEnemy: function() {
         var enemy = this.enemies.getFirstDead();
@@ -159,7 +174,7 @@ var playState = {
 
         if (this.nextEnemy < game.time.now) {
             var start = 4000, end = 1000, score = 100;
-            var delay = Math.max(start - (start-end)*game.global.score/score, end);
+            var delay = Math.max(start - (start-end)*this.score/score, end);
             this.addEnemy();
             this.nextEnemy = game.time.now + delay;
         }
@@ -180,12 +195,12 @@ var playState = {
         }
     },
     takeCoin: function(player, coin) {
-        game.global.score += 5;
-        this.scoreLabel.text = 'score: ' + game.global.score;
+        this.score += 5;
+        this.scoreLabel.text = 'Score: ' + this.score;
         this.coinSound.play();
         this.updateCoinPosition();
 
-        if (game.global.score % 50 == 0) {
+        if (this.score % 50 == 0) {
             this.levelUp();
         }
 
