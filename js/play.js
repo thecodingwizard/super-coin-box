@@ -96,9 +96,9 @@ var playState = {
         if (playState.typed.indexOf("HELP") != -1) {
             playState.enemies.forEachAlive(function(enemy) { enemy.kill(); });
         } else if (playState.typed.indexOf("MORE") != -1) {
-            playState.score += 50;
+            game.global.score += 50;
             playState.checkLevelUp();
-            playState.scoreLabel.setText("Score: " + playState.score);
+            playState.scoreLabel.setText("Score: " + game.global.score);
         } else if (playState.typed.indexOf("LIVE") != -1) {
             playState.lives++;
             playState.livesLabel.setText("Lives: " + playState.lives);
