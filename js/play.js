@@ -1,12 +1,13 @@
 var playState = {
     level: 1,
-    maxLevel: 2,
+    maxLevel: 1,
     coinPositions: [
         {x: 120, y: 120}, {x: 680, y: 120},
         {x: 120, y: 280}, {x: 680, y: 280},
         {x: 120, y: 440}, {x: 680, y: 440}
     ],
     typed: "",
+    lives: 3,
     create: function() {
         this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -36,6 +37,7 @@ var playState = {
         game.global.score = 0;
 
         this.levelLabel = game.add.text(30, 60, "level: " + this.level, { font: '24px Arial', fill: '#ffffff' });
+        this.livesLabel = game.add.text(30, 90, "lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
 
         this.jumpSound = game.add.audio('jump');
         this.coinSound = game.add.audio('coin');
@@ -53,6 +55,7 @@ var playState = {
         this.music.play();
 
         this.createWorld();
+        this.maxLevel = this.map.layers.length;
 
         this.nextEnemy = 0;
 
@@ -199,12 +202,21 @@ var playState = {
             return;
         }
         this.player.kill();
-        this.music.stop();
-        this.deadSound.play();
         this.emitter.x = this.player.x;
         this.emitter.y = this.player.y;
         this.emitter.start(true, 600, null, 15);
-        game.time.events.add(1000, this.startMenu, this);
+        this.deadSound.play();
+        if (this.lives <= 1) {
+            this.music.stop();
+            game.time.events.add(1000, this.startMenu, this);
+        } else {
+            this.lives--;
+            this.enemies.forEachAlive(function(enemy) { enemy.kill(); });
+            game.time.events.add(1000, function() {
+                this.player.reset(game.world.centerX, game.world.centerY);
+            }, this);
+            this.livesLabel.setText("lives: " + this.lives);
+        }
     },
     jumpPlayer: function() {
         // If the player is touching the ground
