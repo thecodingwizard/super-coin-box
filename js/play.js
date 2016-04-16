@@ -133,8 +133,16 @@ var playState = {
         if (!enemy) return;
         enemy.anchor.setTo(0.5, 1);
         enemy.reset(game.world.centerX, 0);
-        enemy.body.gravity.y = 500;
-        enemy.body.velocity.x = 100 * (Math.random() > 0.5 == 1 ? -1 : 1);
+        if (Phaser.Utils.chanceRoll(Math.min(10 + this.score/2.5, 50))) {
+            // spawn hard enemy!
+            enemy.scale.setTo(1.3, 1.3);
+            enemy.body.gravity.y = 700;
+            enemy.body.velocity.x = 150 * (Math.random() > 0.5 == 1 ? -1 : 1);
+        } else {
+            enemy.scale.setTo(1, 1);
+            enemy.body.gravity.y = 500;
+            enemy.body.velocity.x = 100 * (Math.random() > 0.5 == 1 ? -1 : 1);
+        }
         enemy.body.bounce.x = 1;
         enemy.checkWorldBounds = true;
         enemy.outOfBoundsKill = true;
