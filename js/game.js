@@ -3,7 +3,8 @@ var game = new Phaser.Game(800, 560, Phaser.AUTO, "game");
 // Define our 'global' variable
 game.global = {
     score: 0,
-    coins: window.localStorage.coins || 0
+    coins: window.localStorage.coins || 0,
+    modal: new gameModal(game)
 };
 // Add all the states
 game.state.add('boot', bootState);

@@ -10,7 +10,7 @@ var playState = {
     lives: 3,
     create: function() {
         this.level = 1;
-        this.lives = 3;
+        this.lives = window.localStorage.lives || 3;
         game.global.score = 0;
 
         this.cursor = game.input.keyboard.createCursorKeys();
