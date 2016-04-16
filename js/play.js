@@ -130,6 +130,8 @@ var playState = {
         this.map.setCollision(1);
     },
     levelUp: function() {
+        this.lives++;
+        this.livesLabel.setText("Lives: " + this.lives);
         if (this.level >= this.maxLevel) return;
         this.level++;
         this.layer.destroy();
@@ -140,8 +142,6 @@ var playState = {
         this.layer.resizeWorld();
         this.map.setCollision(1, true, this.layer);
         this.levelLabel.setText("Level " + this.level);
-        this.lives++;
-        this.livesLabel.setText("Lives: " + this.lives);
     },
     addEnemy: function() {
         var enemy = this.enemies.getFirstDead();
@@ -175,6 +175,9 @@ var playState = {
         if (this.nextEnemy < game.time.now) {
             var start = 4000, end = 1000, score = 100;
             var delay = Math.max(start - (start-end)*this.score/score, end);
+            if (this.level == 3) {
+                delay = 500;
+            }
             this.addEnemy();
             this.nextEnemy = game.time.now + delay;
         }
