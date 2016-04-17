@@ -1,3 +1,15 @@
+function trackJavaScriptError(e) {
+    var errMsg = e.message;
+    var errSrc = e.filename + ': ' + e.lineno;
+    if (window.location.href.indexOf("localhost") == -1) {
+        ga("send", "event", "Unhandled Error", errMsg, errSrc);
+        console.log("Error caught by google analytics");
+    } else {
+        console.log("Localhost, not sending error...");
+    }
+}
+window.addEventListener('error', trackJavaScriptError, false);
+
 // Initialise Phaser
 var game = new Phaser.Game(800, 560, Phaser.AUTO, "game");
 
