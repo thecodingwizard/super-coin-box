@@ -1,5 +1,13 @@
 // Initialise Phaser
 var game = new Phaser.Game(800, 560, Phaser.AUTO, "game");
+
+var gameModal = require("./modal.js");
+var bootState = require("./boot.js")(game);
+var loadState = require("./load.js")(game);
+var menuState = require("./menu.js")(game);
+var playState = require("./play.js")(game);
+var shopState = require("./shop.js")(game);
+
 // Define our 'global' variable
 game.global = {
     score: 0,

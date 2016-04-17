@@ -1,7 +1,4 @@
-var gameModal = gameModal || {};
-
-
-gameModal = function (game) {
+module.exports = function (game) {
 
     var _this = this;
 
