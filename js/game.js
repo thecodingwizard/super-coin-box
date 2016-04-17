@@ -10,6 +10,18 @@ function trackJavaScriptError(e) {
 }
 window.addEventListener('error', trackJavaScriptError, false);
 
+if (typeof localStorage === 'object') {
+    try {
+        localStorage.setItem('localStorage', 1);
+        localStorage.removeItem('localStorage');
+    } catch (e) {
+        Storage.prototype._setItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function() {};
+        alert('Your web browser does not support storing settings locally. In Safari, the most common cause of this is using "Private Browsing Mode".' +
+              ' Some settings may not save or some features may not work properly for you. In this case, your coins and lives will not be saved! To be fixed soon.');
+    }
+}
+
 // Initialise Phaser
 var game = new Phaser.Game(800, 560, Phaser.AUTO, "game");
 
