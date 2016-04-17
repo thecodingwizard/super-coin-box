@@ -105,6 +105,7 @@ var playState = {
     },
     fire: function() {
         if (this.energy >= 20) {
+            this.prevEnergyUpdateTime = game.time.now;
             this.energy -= 20;
             if (Math.abs(this.player.body.velocity.x) > this.player.body.velocity.y) {
                 this.emitter.x = this.player.x + this.player.body.velocity.x/2;
