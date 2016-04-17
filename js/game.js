@@ -43,7 +43,7 @@ game.global = {
         "coins": 0,
         "lives": 3
     },
-    version: 1,
+    version: 2,
     get: function(name, defaultValue) {
         if (name in this.defaults && defaultValue == null) defaultValue = this.defaults[name];
         if (name in this.cache) return this.cache[name];
@@ -65,8 +65,14 @@ if (localStorage.getItem("version") != game.global.version) {
     var version = localStorage.getItem("version") || 0;
     for (; version < game.global.version; version++) {
         if (version == 0) {
-            game.global.set("lives", window.localStorage.getItem("lives"));
-            game.global.set("coins", window.localStorage.getItem("coins"));
+        }
+        if (version == 1) {
+            if (window.localStorage.getItem("lives") == null) {
+                game.global.set("lives", 3);
+            }
+            if (window.localStorage.getItem("coins") == null) {
+                game.global.set("coins", 0);
+            }
         }
     }
     localStorage.setItem("version", version);
