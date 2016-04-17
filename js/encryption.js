@@ -7,6 +7,10 @@ module.exports = {
         return number;
     },
     decrypt: function(number) {
+        if (number.slice(0, 2) != "0x") {
+            // invalid number
+            return null;
+        }
         var string = "";
         number = number.slice(2);
         var length = number.length;

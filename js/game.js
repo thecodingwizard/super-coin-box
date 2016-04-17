@@ -43,10 +43,11 @@ game.global = {
         "coins": 0,
         "lives": 3
     },
-    get: function(name, default) {
-        if (name in defaults && default == null) default = defaults[name];
-        if (name in cache) return this.cache[name];
-        this.cache[name] = this.parse(this.encryption.decrypt(localStorage.getItem(name)) || default);
+    version: 1,
+    get: function(name, defaultValue) {
+        if (name in this.defaults && defaultValue == null) defaultValue = this.defaults[name];
+        if (name in this.cache) return this.cache[name];
+        this.cache[name] = this.parse(this.encryption.decrypt(localStorage.getItem(name)) || defaultValue);
         return this.cache[name];
     },
     parse: function(toParse) {
@@ -54,10 +55,23 @@ game.global = {
         return toParse;
     },
     set: function(name, value) {
-        this.cache[name] = value;
+        this.cache[name] = this.parse(value);
         localStorage.setItem(name, this.encryption.encrypt(value.toString()));
     }
 };
+
+if (localStorage.getItem("version") != game.global.version) {
+    // run migration!
+    var version = localStorage.getItem("version") || 0;
+    for (; version < game.global.version; version++) {
+        if (version == 0) {
+            game.global.set("lives", window.localStorage.getItem("lives"));
+            game.global.set("coins", window.localStorage.getItem("coins"));
+        }
+    }
+    localStorage.setItem("version", version);
+}
+
 // Add all the states
 game.state.add('boot', bootState);
 game.state.add('load', loadState);

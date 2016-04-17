@@ -51,7 +51,7 @@ module.exports = function(game) {
             this.levelLabel = game.add.text(30, 60, "Level " + this.level, { font: '24px Arial', fill: '#ffffff' });
             this.livesLabel = game.add.text(30, 90, "Lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
 
-            this.coinsLabel = game.add.text(30, 120, "Coins: " + game.global.get("coins")(), { font: '24px Arial', fill: '#ffffff' });
+            this.coinsLabel = game.add.text(30, 120, "Coins: " + game.global.get("coins"), { font: '24px Arial', fill: '#ffffff' });
 
             this.jumpSound = game.add.audio('jump');
             this.coinSound = game.add.audio('coin');
