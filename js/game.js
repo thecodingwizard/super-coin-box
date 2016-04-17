@@ -64,7 +64,9 @@ if (localStorage.getItem("version") != game.global.version) {
     // run migration!
     var version = localStorage.getItem("version") || 0;
     for (; version < game.global.version; version++) {
-        if (version == 0) {
+        if (version == 0 && window.localStorage.getItem("lives") && window.localStorage.getItem("coins")) {
+            game.global.set("lives", window.localStorage.getItem("lives"));
+            game.global.set("coins", window.localStorage.getItem("coins"));
         }
         if (version == 1) {
             if (window.localStorage.getItem("lives") == null) {
