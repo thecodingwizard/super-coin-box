@@ -2,16 +2,24 @@ var playState = {
     level: 1,
     maxLevel: 1,
     coinPositions: [
-        {x: 120, y: 120}, {x: 680, y: 120},
-        {x: 120, y: 280}, {x: 680, y: 280},
-        {x: 120, y: 440}, {x: 680, y: 440}
+        {x: 120, y: 135}, {x: 680, y: 135},
+        {x: 120, y: 295}, {x: 680, y: 295},
+        {x: 120, y: 455}, {x: 680, y: 455}
     ],
     typed: "",
     lives: 3,
+    energy: 100,
+    maxEnergy: 100,
+    currentFadeOutEnergyLabelTween: null,
+    prevEnergyUpdateTime: 0,
     create: function() {
+        game.renderer.renderSession.roundPixels = true;
         this.level = 1;
         this.lives = window.localStorage.lives || 3;
         game.global.score = 0;
+        this.maxEnergy = 100; // todo replace with localstorage
+        this.energy = this.maxEnergy;
+        this.currentFadeOutEnergyLabelTween = null;
 
         this.cursor = game.input.keyboard.createCursorKeys();
 
@@ -27,15 +35,9 @@ var playState = {
         this.enemies.createMultiple(30, 'enemy');
 
         this.coin = game.add.sprite(0, 0, 'coin');
+        this.coin.anchor.setTo(0.5, 0.5);
         this.updateCoinPosition();
         game.physics.arcade.enable(this.coin);
-
-        // game.add.sprite(120, 120, 'coin');
-        // game.add.sprite(680, 120, 'coin');
-        // game.add.sprite(120, 280, 'coin');
-        // game.add.sprite(680, 280, 'coin');
-        // game.add.sprite(120, 440, 'coin');
-        // game.add.sprite(680, 440, 'coin');
 
         this.scoreLabel = game.add.text(30, 30, 'Score: 0', { font: '24px Arial', fill: '#ffffff' });
         game.global.score = 0;
@@ -48,8 +50,8 @@ var playState = {
         this.coinSound = game.add.audio('coin');
         this.deadSound = game.add.audio('dead');
 
-        this.emitter = game.add.emitter(0, 0, 15);
-        this.emitter.makeParticles('pixel');
+        this.emitter = game.add.emitter(0, 0);
+        this.emitter.makeParticles('pixel', 0, 150, true);
         this.emitter.setYSpeed(-150, 150);
         this.emitter.setXSpeed(-150, 150);
         this.emitter.gravity = 0;
@@ -64,7 +66,7 @@ var playState = {
 
         this.nextEnemy = 0;
 
-        game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT]);
+        game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR]);
 
         this.wasd = {
             up: game.input.keyboard.addKey(Phaser.Keyboard.W),
@@ -77,14 +79,62 @@ var playState = {
             this.addMobileInputs();
         }
 
+        var fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        fireButton.onDown.add(this.fire, this);
         game.input.keyboard.onUpCallback = this.checkCheats;
 
-        this.muteButton = game.add.button(game.world.width - 40, 40, 'mute', this.toggleSound, this);
+        this.muteButton = game.add.button(game.world.width - 40, 30, 'mute', this.toggleSound, this);
         this.muteButton.input.useHandCursor = true;
         this.muteButton.anchor.setTo(1, 0);
         if (game.sound.mute) {
             this.muteButton.frame = 1;
         }
+
+        this.energyLabel = game.add.text(game.world.width - 40, 60, "Energy: 100", { font: "24px Arial", fill: "#ffffff" });
+        this.updateEnergy();
+        this.energyLabel.anchor.setTo(1, 0);
+
+        this.notEnoughEnergyLabel = game.add.text(game.world.centerX, game.world.height - 34, "Not Enough Energy!", { font: "24px Arial", fill: "#ffffff" });
+        this.notEnoughEnergyLabel.anchor.setTo(0.5, 0.5);
+        this.notEnoughEnergyLabel.alpha = 0;
+    },
+    incrementEnergy: function() {
+        if (this.energy >= this.maxEnergy) return;
+        this.energy++;
+        this.updateEnergy();
+    },
+    fire: function() {
+        if (this.energy >= 20) {
+            this.energy -= 20;
+            if (Math.abs(this.player.body.velocity.x) > this.player.body.velocity.y) {
+                this.emitter.x = this.player.x + this.player.body.velocity.x/2;
+                this.emitter.y = this.player.y;
+            } else if (this.player.body.velocity.x == 0 && this.player.body.velocity.y == 0) {
+                // up
+                this.emitter.x = this.player.x;
+                this.emitter.y = this.player.y + this.player.body.velocity.y/2;
+            } else {
+                // stationary
+                this.emitter.x = this.player.x;
+                this.emitter.y = this.player.y;
+            }
+            this.emitter.start(true, 600, null, 30);
+            this.nextExplosionTime = Date.now() + 30000;
+            this.updateEnergy();
+        } else {
+            this.notEnoughEnergy();
+        }
+    },
+    notEnoughEnergy: function() {
+        if (this.currentFadeOutEnergyLabelTween != null) this.currentFadeOutEnergyLabelTween.stop();
+        this.notEnoughEnergyLabel.alpha = 1;
+        game.time.events.add(Phaser.Timer.SECOND * 2, this.enoughEnergy, this);
+    },
+    enoughEnergy: function() {
+        this.currentFadeOutEnergyLabelTween = game.add.tween(this.notEnoughEnergyLabel).to({alpha: 0}, 1000, Phaser.Easing.Linear.None, true);
+    },
+    updateEnergy: function() {
+        this.energyLabel.setText("Energy: " + this.energy);
     },
     toggleSound: function() {
         game.sound.mute = ! game.sound.mute;
@@ -188,6 +238,7 @@ var playState = {
         game.physics.arcade.collide(this.enemies, this.layer);
         game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
         game.physics.arcade.overlap(this.player, this.enemies, this.playerDie, null, this);
+        game.physics.arcade.collide(this.enemies, this.emitter, this.enemyDie, null, this);
         this.movePlayer();
         if (!this.player.inWorld) {
             this.playerDie();
@@ -202,6 +253,14 @@ var playState = {
             this.addEnemy();
             this.nextEnemy = game.time.now + delay;
         }
+
+        if (game.time.now - this.prevEnergyUpdateTime >= Phaser.Timer.SECOND/2) {
+            this.incrementEnergy();
+            this.prevEnergyUpdateTime = game.time.now;
+        }
+    },
+    enemyDie: function(enemy) {
+        enemy.kill();
     },
     movePlayer: function() {
         if (this.cursor.left.isDown || this.wasd.left.isDown || this.moveLeft) {
