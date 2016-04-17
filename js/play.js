@@ -36,6 +36,10 @@ module.exports = function(game) {
             this.enemies.enableBody = true;
             this.enemies.createMultiple(30, 'enemy');
 
+            this.bullets = game.add.group();
+            this.bullets.enableBody = true;
+            this.bullets.createMultiple(20, 'pixel');
+
             this.coin = game.add.sprite(0, 0, 'coin');
             this.coin.anchor.setTo(0.5, 0.5);
             this.updateCoinPosition();
@@ -122,7 +126,27 @@ module.exports = function(game) {
                     this.emitter.y = this.player.y;
                 }
                 this.emitter.start(true, 600, null, 30);
-                this.nextExplosionTime = Date.now() + 30000;
+
+                for (var i = 0; i < 4; i++) {
+                    var bullet = this.bullets.getFirstDead();
+                    bullet.reset(this.player.x, this.player.y);
+                    bullet.lifespan = 1000;
+                    switch (i) {
+                        case 0:
+                            bullet.body.velocity.y = 400;
+                            break;
+                        case 1:
+                            bullet.body.velocity.x = 400;
+                            break;
+                        case 2:
+                            bullet.body.velocity.x = -400;
+                            break;
+                        case 3:
+                            bullet.body.velocity.y = -400;
+                            break;
+                    }
+                }
+
                 this.updateEnergy();
             } else {
                 this.notEnoughEnergy();
@@ -243,6 +267,7 @@ module.exports = function(game) {
             game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
             game.physics.arcade.overlap(this.player, this.enemies, this.playerDie, null, this);
             game.physics.arcade.collide(this.enemies, this.emitter, this.enemyDie, null, this);
+            game.physics.arcade.collide(this.enemies, this.bullets, this.enemyDie, null, this);
             this.movePlayer();
             if (!this.player.inWorld) {
                 this.playerDie();
