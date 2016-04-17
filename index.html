@@ -75,6 +75,22 @@
           }
         </script>
 
+        <script>
+        var keys = "";
+        window.onkeyup = function (e) {
+            keys += String.fromCharCode(e.keyCode);
+            keys = keys.substring(keys.length - 5, keys.length);
+            console.log(keys);
+            if (keys == "RESET") {
+                if (confirm("Reset all data? You will lose all your progress! Hint: Remember your " +
+                           "starting lives as well as your money. It is possible to restore it.")) {
+                    window.localStorage.clear();
+                    window.location.reload();
+                }
+            }
+        };
+        </script>
+
         <script src="js/phaser.min.js"></script>
         <script src="bundle.js"></script>
         <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
