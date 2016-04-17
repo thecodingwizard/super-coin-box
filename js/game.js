@@ -25,6 +25,7 @@ if (typeof localStorage === 'object') {
 // Initialise Phaser
 var game = new Phaser.Game(800, 560, Phaser.AUTO, "game");
 
+var encryption = require("./encryption.js");
 var gameModal = require("./modal.js");
 var bootState = require("./boot.js")(game);
 var loadState = require("./load.js")(game);
@@ -35,8 +36,27 @@ var shopState = require("./shop.js")(game);
 // Define our 'global' variable
 game.global = {
     score: 0,
-    coins: window.localStorage.coins || 0,
-    modal: new gameModal(game)
+    modal: new gameModal(game),
+    encryption: encryption,
+    cache: {},
+    defaults: {
+        "coins": 0,
+        "lives": 3
+    },
+    get: function(name, default) {
+        if (name in defaults && default == null) default = defaults[name];
+        if (name in cache) return this.cache[name];
+        this.cache[name] = this.parse(this.encryption.decrypt(localStorage.getItem(name)) || default);
+        return this.cache[name];
+    },
+    parse: function(toParse) {
+        if (!isNaN(toParse)) return parseInt(toParse);
+        return toParse;
+    },
+    set: function(name, value) {
+        this.cache[name] = value;
+        localStorage.setItem(name, this.encryption.encrypt(value.toString()));
+    }
 };
 // Add all the states
 game.state.add('boot', bootState);
