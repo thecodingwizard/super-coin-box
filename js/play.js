@@ -13,6 +13,7 @@ var playState = {
     currentFadeOutEnergyLabelTween: null,
     prevEnergyUpdateTime: 0,
     create: function() {
+        game.time.advancedTiming = true;
         game.renderer.renderSession.roundPixels = true;
         this.level = 1;
         this.lives = window.localStorage.lives || 3;
@@ -235,6 +236,7 @@ var playState = {
         enemy.outOfBoundsKill = true;
     },
     update: function() {
+        if (window.location.href.indexOf("localhost")) game.debug.text(game.time.fps, 2, 14, "#00ff00");
         game.physics.arcade.collide(this.player, this.layer);
         game.physics.arcade.collide(this.enemies, this.layer);
         game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
