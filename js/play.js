@@ -17,7 +17,7 @@ module.exports = function(game) {
             game.time.advancedTiming = true;
             game.renderer.renderSession.roundPixels = true;
             this.level = 1;
-            this.lives = game.global.get("lives");
+            this.lives = window.localStorage.lives || 3;
             game.global.score = 0;
             this.maxEnergy = 100; // todo replace with localstorage
             this.energy = this.maxEnergy;
@@ -50,8 +50,7 @@ module.exports = function(game) {
 
             this.levelLabel = game.add.text(30, 60, "Level " + this.level, { font: '24px Arial', fill: '#ffffff' });
             this.livesLabel = game.add.text(30, 90, "Lives: " + this.lives, { font: '24px Arial', fill: '#ffffff' });
-
-            this.coinsLabel = game.add.text(30, 120, "Coins: " + game.global.get("coins")(), { font: '24px Arial', fill: '#ffffff' });
+            this.coinsLabel = game.add.text(30, 120, "Coins: " + game.global.coins, { font: '24px Arial', fill: '#ffffff' });
 
             this.jumpSound = game.add.audio('jump');
             this.coinSound = game.add.audio('coin');
@@ -262,7 +261,7 @@ module.exports = function(game) {
             enemy.outOfBoundsKill = true;
         },
         update: function() {
-            if (window.location.href.indexOf("localhost") != -1) game.debug.text(game.time.fps, 2, 14, "#00ff00");
+            if (window.location.href.indexOf("localhost")) game.debug.text(game.time.fps, 2, 14, "#00ff00");
             game.physics.arcade.collide(this.player, this.layer);
             game.physics.arcade.collide(this.enemies, this.layer);
             game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
@@ -309,9 +308,10 @@ module.exports = function(game) {
         },
         takeCoin: function(player, coin) {
             game.global.score += 5;
-            game.global.set("coins", game.global.get("coins")+1);
+            game.global.coins++;
             this.scoreLabel.text = 'Score: ' + game.global.score;
-            this.coinsLabel.text = "Coins: " + game.global.get("coins");
+            this.coinsLabel.text = "Coins: " + game.global.coins;
+            window.localStorage.coins = game.global.coins;
             this.coinSound.play();
             this.updateCoinPosition();
 
