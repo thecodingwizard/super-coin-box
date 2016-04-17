@@ -100,7 +100,7 @@ var playState = {
     },
     incrementEnergy: function() {
         if (this.energy >= this.maxEnergy) return;
-        this.energy++;
+        this.energy+=5;
         this.updateEnergy();
     },
     fire: function() {
@@ -254,7 +254,7 @@ var playState = {
             this.nextEnemy = game.time.now + delay;
         }
 
-        if (game.time.now - this.prevEnergyUpdateTime >= Phaser.Timer.SECOND/2) {
+        if (game.time.now - this.prevEnergyUpdateTime >= Phaser.Timer.SECOND*5/2) {
             this.incrementEnergy();
             this.prevEnergyUpdateTime = game.time.now;
         }
