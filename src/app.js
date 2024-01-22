@@ -1,44 +1,28 @@
 import Phaser from "phaser";
 
-class Example extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
   preload() {
-    this.load.setBaseURL("https://labs.phaser.io");
-
-    this.load.image("sky", "assets/skies/space3.png");
-    this.load.image("logo", "assets/sprites/phaser3-logo.png");
-    this.load.image("red", "assets/particles/red.png");
+    this.load.image("player", "assets/player.png");
   }
 
   create() {
-    this.add.image(400, 300, "sky");
+    // create the player sprite
+    this.player = this.physics.add.sprite(250, 170, "player");
 
-    const particles = this.add.particles(0, 0, "red", {
-      speed: 100,
-      scale: { start: 1, end: 0 },
-      blendMode: "ADD",
-    });
-
-    const logo = this.physics.add.image(400, 100, "logo");
-
-    logo.setVelocity(100, 200);
-    logo.setBounce(1, 1);
-    logo.setCollideWorldBounds(true);
-
-    particles.startFollow(logo);
+    // add gravity to make the player fall
+    this.player.body.gravity.y = 500;
   }
 }
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  scene: Example,
+  width: 500,
+  height: 340,
+  scene: GameScene,
   physics: {
     default: "arcade",
-    arcade: {
-      gravity: { y: 200 },
-    },
   },
+  backgroundColor: '#3498db',
 };
 
 const game = new Phaser.Game(config);
