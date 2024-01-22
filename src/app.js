@@ -11,6 +11,7 @@ class GameScene extends Phaser.Scene {
     this.load.image("wallVertical", "assets/wallVertical.png");
 
     this.load.image("coin", "assets/coin.png");
+    this.load.image("enemy", "assets/enemy.png");
   }
 
   /**
@@ -40,6 +41,17 @@ class GameScene extends Phaser.Scene {
     });
 
     this.score = 0;
+
+    // add enemies!
+    this.enemies = this.physics.add.group();
+    // call this.addEnemy() once every 2.2 seconds
+    this.time.addEvent({
+      delay: 2200,
+      callback: () => this.addEnemy(),
+      loop: true,
+    });
+    // Make the enemies and walls collide
+    this.physics.add.collider(this.enemies, this.walls);
   }
 
   /**
@@ -129,6 +141,29 @@ class GameScene extends Phaser.Scene {
 
     let newPosition = Phaser.Math.RND.pick(positions);
     this.coin.setPosition(newPosition.x, newPosition.y);
+  }
+
+  /**
+   * Create a new enemy
+   */
+  addEnemy() {
+    // create the enemy sprite at (250, -10)
+    let enemy = this.enemies.create(250, -10, "enemy");
+
+    // add gravity to the enemy to make it fall
+    enemy.body.gravity.y = 500;
+    // randomly make the enemy move left or right
+    enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200]);
+    // when the enemy hits a left or right wall, we want it to
+    // bounce back in the opposite direction without losing speed
+    enemy.body.bounce.x = 1;
+
+    // destroy the enemy after 10 seconds
+    // this is roughly how long it takes to fall through the hole
+    this.time.addEvent({
+      delay: 10000,
+      callback: () => enemy.destroy(),
+    });
   }
 }
 
