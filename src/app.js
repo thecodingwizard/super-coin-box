@@ -101,15 +101,37 @@ class GameScene extends Phaser.Scene {
   checkCoinCollisions() {
     if (this.physics.overlap(this.player, this.coin)) {
       // the player has taken a coin!
-      // delete the coin
-      this.coin.destroy();
       // add 5 to the score
       this.score += 5;
       // update the score label
       this.scoreLabel.setText("score: " + this.score);
+      // move the coin to a new spot
+      this.moveCoin();
     }
   }
+
+  /**
+   * Move the coin to a different random location
+   */
+  moveCoin() {
+    // these are the possible positions the coin can move to
+    let positions = [
+      { x: 140, y: 60 },
+      { x: 360, y: 60 },
+      { x: 60, y: 140 },
+      { x: 440, y: 140 },
+      { x: 130, y: 300 },
+      { x: 370, y: 300 },
+    ];
+
+    // don't move to the same location it was already at
+    positions = positions.filter((p) => !(p.x === this.coin.x && p.y === this.coin.y));
+
+    let newPosition = Phaser.Math.RND.pick(positions);
+    this.coin.setPosition(newPosition.x, newPosition.y);
+  }
 }
+
 
 const config = {
   type: Phaser.AUTO,
