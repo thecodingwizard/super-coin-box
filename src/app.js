@@ -52,6 +52,10 @@ class GameScene extends Phaser.Scene {
     });
     // Make the enemies and walls collide
     this.physics.add.collider(this.enemies, this.walls);
+    // If the player collides with an enemy, restart the game
+    this.physics.add.collider(this.player, this.enemies, () => {
+      this.handlePlayerDeath();
+    });
   }
 
   /**
@@ -83,6 +87,12 @@ class GameScene extends Phaser.Scene {
   update() {
     this.movePlayer();
     this.checkCoinCollisions();
+
+    // If the player goes out of bounds (ie. falls through a hole),
+    // the player dies
+    if (this.player.y > 340 || this.player.y < 0) {
+      this.handlePlayerDeath();
+    }
   }
 
   /**
@@ -164,6 +174,14 @@ class GameScene extends Phaser.Scene {
       delay: 10000,
       callback: () => enemy.destroy(),
     });
+  }
+
+  /**
+   * Called when the player dies. Restart the game
+   */
+  handlePlayerDeath() {
+    this.scene.restart();
+    console.log("die");
   }
 }
 
