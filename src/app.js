@@ -9,6 +9,8 @@ class GameScene extends Phaser.Scene {
 
     this.load.image("wallHorizontal", "assets/wallHorizontal.png");
     this.load.image("wallVertical", "assets/wallVertical.png");
+
+    this.load.image("coin", "assets/coin.png");
   }
 
   /**
@@ -21,13 +23,23 @@ class GameScene extends Phaser.Scene {
     // add gravity to make the player fall
     this.player.body.gravity.y = 500;
 
-    // create cursor keys
+    // create arrow keys
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.createWalls();
 
     // Make the player collide with walls
     this.physics.add.collider(this.player, this.walls);
+
+    this.coin = this.physics.add.sprite(60, 130, "coin");
+
+    // Display the score
+    this.scoreLabel = this.add.text(30, 25, "score: 0", {
+      font: "18px Arial",
+      fill: "#ffffff",
+    });
+
+    this.score = 0;
   }
 
   /**
@@ -52,7 +64,7 @@ class GameScene extends Phaser.Scene {
 
   /**
    * Phaser calls this function once a frame (60 times a second).
-   * 
+   *
    * Use this function to move the player in response to actions,
    * check for win conditions, etc.
    */
@@ -91,7 +103,7 @@ const config = {
   physics: {
     default: "arcade",
   },
-  backgroundColor: '#3498db',
+  backgroundColor: "#3498db",
 };
 
 const game = new Phaser.Game(config);
