@@ -70,6 +70,7 @@ class GameScene extends Phaser.Scene {
    */
   update() {
     this.movePlayer();
+    this.checkCoinCollisions();
   }
 
   /**
@@ -91,6 +92,21 @@ class GameScene extends Phaser.Scene {
     if (this.cursors.up.isDown && this.player.body.onFloor()) {
       // jump if the player is on the ground
       this.player.body.velocity.y = -320;
+    }
+  }
+
+  /**
+   * Check to see whether the player has collided with any coins
+   */
+  checkCoinCollisions() {
+    if (this.physics.overlap(this.player, this.coin)) {
+      // the player has taken a coin!
+      // delete the coin
+      this.coin.destroy();
+      // add 5 to the score
+      this.score += 5;
+      // update the score label
+      this.scoreLabel.setText("score: " + this.score);
     }
   }
 }
