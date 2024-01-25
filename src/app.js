@@ -12,6 +12,10 @@ class GameScene extends Phaser.Scene {
 
     this.load.image("coin", "assets/coin.png");
     this.load.image("enemy", "assets/enemy.png");
+
+    this.load.audio("jump", ["assets/jump.ogg", "assets/jump.mp3"]);
+    this.load.audio("coin", ["assets/coin.ogg", "assets/coin.mp3"]);
+    this.load.audio("dead", ["assets/dead.ogg", "assets/dead.mp3"]);
   }
 
   /**
@@ -56,6 +60,10 @@ class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.enemies, () => {
       this.handlePlayerDeath();
     });
+
+    this.jumpSound = this.sound.add("jump");
+    this.coinSound = this.sound.add("coin");
+    this.deadSound = this.sound.add("dead");
   }
 
   /**
@@ -114,6 +122,7 @@ class GameScene extends Phaser.Scene {
     if (this.cursors.up.isDown && this.player.body.onFloor()) {
       // jump if the player is on the ground
       this.player.body.velocity.y = -320;
+      this.jumpSound.play();
     }
   }
 
@@ -129,6 +138,7 @@ class GameScene extends Phaser.Scene {
       this.scoreLabel.setText("score: " + this.score);
       // move the coin to a new spot
       this.moveCoin();
+      this.coinSound.play();
     }
   }
 
@@ -181,7 +191,7 @@ class GameScene extends Phaser.Scene {
    */
   handlePlayerDeath() {
     this.scene.restart();
-    console.log("die");
+    this.deadSound.play();
   }
 }
 
