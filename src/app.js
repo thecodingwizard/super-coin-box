@@ -181,6 +181,19 @@ class GameScene extends Phaser.Scene {
 
     let newPosition = Phaser.Math.RND.pick(positions);
     this.coin.setPosition(newPosition.x, newPosition.y);
+    this.coin.setScale(0);
+
+    this.tweens.add({
+      targets: this.coin,
+      scale: 1,
+      duration: 300,
+    });
+    this.tweens.add({
+      targets: this.player,
+      scale: 1.3,
+      duration: 100,
+      yoyo: true, // perform the tween forward then backward
+    });
   }
 
   /**
