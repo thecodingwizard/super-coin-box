@@ -10,8 +10,9 @@ class GameScene extends Phaser.Scene {
       frameHeight: 20,
     });
 
-    this.load.image("wallHorizontal", "assets/wallHorizontal.png");
-    this.load.image("wallVertical", "assets/wallVertical.png");
+    this.load.image("tileset", "assets/tileset.png");
+    // created with Tiled tilemap editor
+    this.load.tilemapTiledJSON("map", "assets/map.json");
 
     this.load.image("coin", "assets/coin.png");
     this.load.image("enemy", "assets/enemy.png");
@@ -28,7 +29,7 @@ class GameScene extends Phaser.Scene {
    */
   create() {
     // create the player sprite
-    this.player = this.physics.add.sprite(250, 170, "player");
+    this.player = this.physics.add.sprite(this.game.config.width / 2, this.game.config.height / 2, "player");
 
     // player movement animations
     this.anims.create({
@@ -105,20 +106,17 @@ class GameScene extends Phaser.Scene {
    * Creates the walls of the game
    */
   createWalls() {
-    this.walls = this.physics.add.staticGroup();
+    // create the tilemap
+    let map = this.add.tilemap("map");
 
-    this.walls.create(10, 170, "wallVertical"); // Left
-    this.walls.create(490, 170, "wallVertical"); // Right
+    // Add the tileset to the map
+    // the first parameter is the name of the tileset in Tiled
+    // the second parameter is the name of the tileset in preload()
+    let tileset = map.addTilesetImage("tileset", "tileset");
+    this.walls = map.createLayer("Level 1", tileset);
 
-    this.walls.create(50, 10, "wallHorizontal"); // Top left
-    this.walls.create(450, 10, "wallHorizontal"); // Top right
-    this.walls.create(50, 330, "wallHorizontal"); // Bottom left
-    this.walls.create(450, 330, "wallHorizontal"); // Bottom right
-
-    this.walls.create(0, 170, "wallHorizontal"); // Middle left
-    this.walls.create(500, 170, "wallHorizontal"); // Middle right
-    this.walls.create(250, 90, "wallHorizontal"); // Middle top
-    this.walls.create(250, 250, "wallHorizontal"); // Middle bottom
+    // Enable collisions for the first tile (the blue walls)
+    this.walls.setCollision(1);
   }
 
   /**
@@ -138,7 +136,7 @@ class GameScene extends Phaser.Scene {
 
     // If the player goes out of bounds (ie. falls through a hole),
     // the player dies
-    if (this.player.y > 340 || this.player.y < 0) {
+    if (this.player.y > this.game.config.height || this.player.y < 0) {
       this.handlePlayerDeath();
     }
   }
@@ -191,12 +189,9 @@ class GameScene extends Phaser.Scene {
   moveCoin() {
     // these are the possible positions the coin can move to
     let positions = [
-      { x: 140, y: 60 },
-      { x: 360, y: 60 },
-      { x: 60, y: 140 },
-      { x: 440, y: 140 },
-      { x: 130, y: 300 },
-      { x: 370, y: 300 },
+      {x: 120, y: 135}, {x: 680, y: 135},
+      {x: 120, y: 295}, {x: 680, y: 295},
+      {x: 120, y: 455}, {x: 680, y: 455}
     ];
 
     // don't move to the same location it was already at
@@ -223,8 +218,7 @@ class GameScene extends Phaser.Scene {
    * Create a new enemy
    */
   addEnemy() {
-    // create the enemy sprite at (250, -10)
-    let enemy = this.enemies.create(250, -10, "enemy");
+    let enemy = this.enemies.create(this.game.config.width / 2, 0, "enemy");
 
     // add gravity to the enemy to make it fall
     enemy.body.gravity.y = 500;
@@ -264,8 +258,8 @@ class GameScene extends Phaser.Scene {
 
 const config = {
   type: Phaser.AUTO,
-  width: 500,
-  height: 340,
+  width: 800,
+  height: 560,
   scene: GameScene,
   physics: {
     default: "arcade",
