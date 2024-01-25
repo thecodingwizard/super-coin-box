@@ -19,6 +19,8 @@ class GameScene extends Phaser.Scene {
     this.load.audio("jump", ["assets/jump.ogg", "assets/jump.mp3"]);
     this.load.audio("coin", ["assets/coin.ogg", "assets/coin.mp3"]);
     this.load.audio("dead", ["assets/dead.ogg", "assets/dead.mp3"]);
+
+    this.load.image("pixel", "assets/pixel.png");
   }
 
   /**
@@ -81,6 +83,22 @@ class GameScene extends Phaser.Scene {
     this.jumpSound = this.sound.add("jump");
     this.coinSound = this.sound.add("coin");
     this.deadSound = this.sound.add("dead");
+
+    // particles for when the player dies
+    // the initial location doesn't matter -- we'll set the location
+    // in handlePlayerDeath()
+    this.emitter = this.add.particles(0, 0, "pixel", {
+      // how many particles
+      quantity: 15,
+      // min/max speed of the particles, in pixels per second
+      speed: { min: -150, max: 150 },
+      // scale the particles from 2x original size to 0.1x
+      scale: { start: 2, end: 0.1 },
+      // how long the particles last, milliseconds
+      lifespan: 800,
+      // don't start the explosion right away
+      emitting: false,
+    });
   }
 
   /**
@@ -110,6 +128,11 @@ class GameScene extends Phaser.Scene {
    * check for win conditions, etc.
    */
   update() {
+    if (!this.player.active) {
+      // the player is dead
+      return;
+    }
+
     this.movePlayer();
     this.checkCoinCollisions();
 
@@ -223,8 +246,18 @@ class GameScene extends Phaser.Scene {
    * Called when the player dies. Restart the game
    */
   handlePlayerDeath() {
-    this.scene.restart();
     this.deadSound.play();
+    this.emitter.explode(this.emitter.quantity, this.player.x, this.player.y);
+    
+    // we can't immediately restart the scene; otherwise our particles will disappear
+    // delete the player
+    this.player.destroy();
+    // delete all the enemies
+    this.enemies.clear(true, true);
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => this.scene.restart()
+    });
   }
 }
 
