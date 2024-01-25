@@ -5,7 +5,10 @@ class GameScene extends Phaser.Scene {
    * Load any assets you might need here!
    */
   preload() {
-    this.load.image("player", "assets/player.png");
+    this.load.spritesheet("player", "assets/player2.png", {
+      frameWidth: 20,
+      frameHeight: 20,
+    });
 
     this.load.image("wallHorizontal", "assets/wallHorizontal.png");
     this.load.image("wallVertical", "assets/wallVertical.png");
@@ -24,6 +27,20 @@ class GameScene extends Phaser.Scene {
   create() {
     // create the player sprite
     this.player = this.physics.add.sprite(250, 170, "player");
+
+    // player movement animations
+    this.anims.create({
+      key: "right",
+      frames: this.anims.generateFrameNumbers("player", {frames: [1, 2]}),
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "left",
+      frames: this.anims.generateFrameNumbers("player", {frames: [3, 4]}),
+      frameRate: 8,
+      repeat: -1,
+    });
 
     // add gravity to make the player fall
     this.player.body.gravity.y = 500;
@@ -111,12 +128,15 @@ class GameScene extends Phaser.Scene {
     if (this.cursors.left.isDown) {
       // move left
       this.player.body.velocity.x = -200;
+      this.player.anims.play("left", true);
     } else if (this.cursors.right.isDown) {
       // move right
       this.player.body.velocity.x = 200;
+      this.player.anims.play("right", true);
     } else {
       // stop moving in the horizontal
       this.player.body.velocity.x = 0;
+      this.player.setFrame(0);
     }
 
     if (this.cursors.up.isDown && this.player.body.onFloor()) {
