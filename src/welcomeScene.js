@@ -35,6 +35,22 @@ class WelcomeScene extends Phaser.Scene {
     this.downArrow.on("up", () => {
       this.scene.start("GameScene");
     });
+
+    this.tweens
+      .chain({
+        targets: startLabel,
+        tweens: [
+          {
+            angle: -2,
+            duration: 500,
+          },
+          {
+            angle: 2,
+            duration: 500,
+          },
+        ],
+        loop: -1, // loop inefinitely
+      });
   }
 }
 
