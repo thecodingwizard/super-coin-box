@@ -15,7 +15,7 @@ class WelcomeScene extends Phaser.Scene {
 
     let nameLabel = this.add.text(
       this.game.config.width / 2,
-      150,
+      -100,
       "Super Coin Box",
       { font: "100px Geo", fill: "#ffffff" },
     );
@@ -50,6 +50,14 @@ class WelcomeScene extends Phaser.Scene {
           },
         ],
         loop: -1, // loop inefinitely
+      });
+
+    this.tweens
+      .add({
+        targets: nameLabel,
+        y: 150,
+        duration: 1200,
+        ease: "Bounce.Out",
       });
   }
 }
