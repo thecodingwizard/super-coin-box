@@ -75,6 +75,13 @@ class GameScene extends Phaser.Scene {
 
     this.score = 0;
 
+    this.lives = 3;
+    this.livesLabel = this.add.text(30, 50, "", {
+      font: "18px Arial",
+      fill: "#ffffff",
+    });
+    this.updateLivesLabel();
+
     // add enemies!
     this.enemies = this.physics.add.group();
     // call this.addEnemy() once every 2.2 seconds
@@ -259,13 +266,33 @@ class GameScene extends Phaser.Scene {
 
     // we can't immediately restart the scene; otherwise our particles will disappear
     // delete the player
-    this.player.destroy();
+    // note: this changed!
+    this.player.setVisible(false);
+    this.player.setActive(false);
     // delete all the enemies
     this.enemies.clear(true, true);
+
+    this.lives -= 1;
+    this.updateLivesLabel();
     this.time.addEvent({
       delay: 1000,
-      callback: () => this.scene.restart(),
+      callback: () => {
+        if (this.lives > 0) {
+          this.player.setVisible(true);
+          this.player.setActive(true);
+          this.player.setPosition(
+            this.game.config.width / 2,
+            this.game.config.height / 2,
+          );
+        } else {
+          this.scene.start("WelcomeScene");
+        }
+      },
     });
+  }
+
+  updateLivesLabel() {
+    this.livesLabel.setText("lives: " + this.lives);
   }
 }
 
