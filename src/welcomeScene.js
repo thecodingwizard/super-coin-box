@@ -49,7 +49,7 @@ class WelcomeScene extends Phaser.Scene {
             duration: 500,
           },
         ],
-        loop: -1, // loop inefinitely
+        loop: -1, // loop indefinitely
       });
 
     this.tweens
