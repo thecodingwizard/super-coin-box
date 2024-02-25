@@ -241,10 +241,17 @@ class GameScene extends Phaser.Scene {
   addEnemy() {
     let enemy = this.enemies.create(this.game.config.width / 2, 0, "enemy");
 
-    // add gravity to the enemy to make it fall
-    enemy.body.gravity.y = 500;
-    // randomly make the enemy move left or right
-    enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200]);
+    if (Math.random() < 0.5) {
+      // spawn hard enemy!
+      enemy.setScale(1.3, 1.3);
+      enemy.body.gravity.y = 700;
+      enemy.body.velocity.x = Phaser.Math.RND.pick([-150, 150]);
+    } else {
+      enemy.setScale(1.0, 1.0);
+      enemy.body.gravity.y = 700;
+      enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200]);
+    }
+
     // when the enemy hits a left or right wall, we want it to
     // bounce back in the opposite direction without losing speed
     enemy.body.bounce.x = 1;
