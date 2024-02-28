@@ -11,6 +11,9 @@ class GameScene extends Phaser.Scene {
     this.load.image("wallVertical", "assets/wallVertical.png");
 
     this.load.image("coin", "assets/coin.png");
+    // TODO 1: load the enemy image from "assets/enemy.png" into "enemy"
+
+    // TODO 6.1: load in the audio for 'jump', 'coin', and 'dead'
   }
 
   /**
@@ -19,6 +22,9 @@ class GameScene extends Phaser.Scene {
   create() {
     // create the player sprite
     this.player = this.physics.add.sprite(250, 170, "player");
+
+    // TODO 7: add the player movement animations!
+
 
     // add gravity to make the player fall
     this.player.body.gravity.y = 500;
@@ -40,6 +46,16 @@ class GameScene extends Phaser.Scene {
     });
 
     this.score = 0;
+
+    // TODO 2.1: create an instance variable called 'enemies' that is a new physics group!
+
+    // TODO 2.2: add a new enemy every 2.2 seconds
+
+    // TODO 3.3: make the enemies and walls collide!
+
+    // TODO 5.1: if the player collides with an enemy, restart the game!
+
+    // TODO 6.2: add jumpSound, coinSound, and deadSound as instance variables!
   }
 
   /**
@@ -71,27 +87,34 @@ class GameScene extends Phaser.Scene {
   update() {
     this.movePlayer();
     this.checkCoinCollisions();
+
+    // TODO 5.2: if the player goes out of bounds, kill the player
   }
 
   /**
    * Handles moving the player with the arrow keys
    */
   movePlayer() {
+    // TODO 8: update movePlayer() to play the movement animations!
     // check for active input
     if (this.cursors.left.isDown) {
       // move left
       this.player.body.velocity.x = -200;
+      // TODO 8.1: play the 'left' animation
     } else if (this.cursors.right.isDown) {
       // move right
       this.player.body.velocity.x = 200;
+      // TODO 8.2: play the 'right' animation
     } else {
       // stop moving in the horizontal
       this.player.body.velocity.x = 0;
+      // TODO 8.3: set the player sprite to the 'still' frame!
     }
 
     if (this.cursors.up.isDown && this.player.body.onFloor()) {
       // jump if the player is on the ground
       this.player.body.velocity.y = -320;
+      // TODO 6.3: play jumpSound on jump
     }
   }
 
@@ -107,6 +130,10 @@ class GameScene extends Phaser.Scene {
       this.scoreLabel.setText("score: " + this.score);
       // move the coin to a new spot
       this.moveCoin();
+
+      // TODO 6.4: play the coin sound!
+
+      // TODO 9: add tweens for the coin & player!
     }
   }
 
@@ -125,13 +152,49 @@ class GameScene extends Phaser.Scene {
     ];
 
     // don't move to the same location it was already at
-    positions = positions.filter((p) => !(p.x === this.coin.x && p.y === this.coin.y));
+    positions = positions.filter(
+      (p) => !(p.x === this.coin.x && p.y === this.coin.y),
+    );
 
     let newPosition = Phaser.Math.RND.pick(positions);
     this.coin.setPosition(newPosition.x, newPosition.y);
   }
-}
 
+  // TODO 3: Implement addEnemy()!
+  /**
+   * Create a new enemy
+   */
+  addEnemy() {
+    // TODO 3.1: Create the enemy sprite at (250, -10), and store this in a variable called 'enemy'
+    // hint: how did we create our walls at a specific coordinate?
+
+    // TODO 3.2: add gravity to the enemy to make it fall! use the same gravity as the player
+
+    // TODO 3.4: randomly make the enemy move left or right, with a velocity of -200 or 200!
+    // hint: use Phaser.Math.RND.pick(array of options)
+    
+    // TODO 3.5: make the enemy bounce back when it hits a wall!
+    // when an enemy hits a wall, we want it to bounce back 
+    // in the opposite direction without losing speed
+
+    // TODO 3.6: destroy the enemy after 10 seconds, using enemy.destroy()!
+    // this is roughly how long it takes to fall through the hole
+    // hint: what did we use to create the enemy every 2.2 seconds
+  }
+
+  // TODO 4: Implement handlePlayerDeath()!
+  /**
+   * Called when the player dies. Restart the game
+   */
+  handlePlayerDeath() {
+    // TODO 4.1: restart the scene
+
+    // TODO 4.2: log to the console that we died :(((
+
+    // TODO 6.5: play the death sound!
+
+  }
+}
 
 const config = {
   type: Phaser.AUTO,
