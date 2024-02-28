@@ -177,9 +177,9 @@ class GameScene extends Phaser.Scene {
     // when an enemy hits a wall, we want it to bounce back 
     // in the opposite direction without losing speed
 
-    // TODO 3.6: destroy the enemy after 10 seconds, using enemy.destroy()!
+    // TODO 3.6: destroy the enemy after 15 seconds, using enemy.destroy()!
     // this is roughly how long it takes to fall through the hole
-    // hint: what did we use to create the enemy every 2.2 seconds
+    // hint: what did we use to create the enemy every 2.2 seconds?
   }
 
   // TODO 4: Implement handlePlayerDeath()!
