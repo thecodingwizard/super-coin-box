@@ -10,6 +10,8 @@ class GameScene extends Phaser.Scene {
       frameHeight: 20,
     });
 
+    // TODO 1: load the tileset and tilemap with keys of "tileset" and "map" respectively.
+
     this.load.image("wallHorizontal", "assets/wallHorizontal.png");
     this.load.image("wallVertical", "assets/wallVertical.png");
 
@@ -87,6 +89,7 @@ class GameScene extends Phaser.Scene {
    * Creates the walls of the game
    */
   createWalls() {
+    // TODO 2.1: comment out manual wall creation
     this.walls = this.physics.add.staticGroup();
 
     this.walls.create(10, 170, "wallVertical"); // Left
@@ -101,6 +104,16 @@ class GameScene extends Phaser.Scene {
     this.walls.create(500, 170, "wallHorizontal"); // Middle right
     this.walls.create(250, 90, "wallHorizontal"); // Middle top
     this.walls.create(250, 250, "wallHorizontal"); // Middle bottom
+
+    // TODO 2.2: create a tilemap called map with this.add.tilemap()
+    // the first parameter is the name of the tilemap in preload()
+
+    // TODO 2.3: add the tileset to the tilemap with map.addTilesetImage(tilesetName, key)
+    // the first parameter is the name of the tileset in Tiled
+    // the second parameter is the name of the tileset in preload()
+
+    // TODO 2.4: Enable collisions for the first tile (the blue walls) with the setCollision() method
+
   }
 
   /**
