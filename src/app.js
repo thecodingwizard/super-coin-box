@@ -53,7 +53,7 @@ class GameScene extends Phaser.Scene {
 
     // TODO 3.3: make the enemies and walls collide!
 
-    // TODO 5.1: if the player collides with an enemy, restart the game!
+    // TODO 5.1: if the player collides with an enemy, kill the player!
 
     // TODO 6.2: add jumpSound, coinSound, and deadSound as instance variables!
   }
