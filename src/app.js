@@ -55,7 +55,8 @@ class GameScene extends Phaser.Scene {
     // Make the player collide with walls
     this.physics.add.collider(this.player, this.walls);
 
-    this.coin = this.physics.add.sprite(60, 130, "coin");
+    this.coin = this.physics.add.sprite(0, 0, "coin");
+    this.moveCoin();
 
     // Display the score
     this.scoreLabel = this.add.text(30, 25, "score: 0", {
@@ -231,10 +232,10 @@ class GameScene extends Phaser.Scene {
     // bounce back in the opposite direction without losing speed
     enemy.body.bounce.x = 1;
 
-    // destroy the enemy after 10 seconds
+    // destroy the enemy after 15 seconds
     // this is roughly how long it takes to fall through the hole
     this.time.addEvent({
-      delay: 10000,
+      delay: 15000,
       callback: () => enemy.destroy(),
     });
   }
