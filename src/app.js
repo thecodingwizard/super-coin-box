@@ -83,6 +83,8 @@ class GameScene extends Phaser.Scene {
     this.jumpSound = this.sound.add("jump");
     this.coinSound = this.sound.add("coin");
     this.deadSound = this.sound.add("dead");
+
+    // TODO 4.2: Add emitter for particle system.
   }
 
   /**
@@ -91,6 +93,8 @@ class GameScene extends Phaser.Scene {
   createWalls() {
     // TODO 2.1: comment out manual wall creation
     this.walls = this.physics.add.staticGroup();
+
+    // TODO 4.1: import pixel as "pixel" from "assets/pixel.png"
 
     this.walls.create(10, 170, "wallVertical"); // Left
     this.walls.create(490, 170, "wallVertical"); // Right
@@ -123,6 +127,9 @@ class GameScene extends Phaser.Scene {
    * check for win conditions, etc.
    */
   update() {
+
+    // TODO 5.1: 
+
     this.movePlayer();
     this.checkCoinCollisions();
 
@@ -236,12 +243,17 @@ class GameScene extends Phaser.Scene {
    * Called when the player dies. Restart the game
    */
   handlePlayerDeath() {
+    // TODO 5.1: EXPLODE!!
     this.scene.restart();
     this.deadSound.play();
+
+    // TODO 5.2: Instead of immediately restarting the game, add a delay
+    // Hint: see addEnemy()
+
   }
 }
 
-
+// TODO 3.1: Update the map config so that the width is 800 and the height is 560 
 const config = {
   type: Phaser.AUTO,
   width: 500,
