@@ -30,6 +30,11 @@ class GameScene extends Phaser.Scene {
 	 * Called once. Create any objects you need here!
 	 */
 	create() {
+
+		// TODO 7.1: add lives variable
+
+		// TODO 7.2: add liveslabel variable (text shown) an update for it
+
 		// create the player sprite
 		this.player = this.physics.add.sprite(this.game.config.width / 2, this.game.config.height / 2, "player");
 
@@ -103,6 +108,10 @@ class GameScene extends Phaser.Scene {
 			// don't start the explosion right away
 			emitting: false,
 		});
+	}
+
+	updateLivesLabel() {
+		// TODO 7.3: create function that updates the lives label
 	}
 
 	/**
@@ -223,12 +232,15 @@ class GameScene extends Phaser.Scene {
 	addEnemy() {
 		let enemy = this.enemies.create(this.game.config.width / 2, 0, "enemy");
 
+
+		// TODO 8: this below gravity/velocity code to use something based on randomness! 
+
 		// add gravity to the enemy to make it fall
 		enemy.body.gravity.y = 500;
 		// randomly make the enemy move left or right
 		enemy.body.velocity.x = Phaser.Math.RND.pick([-200, 200]);
-		// when the enemy hits a left or right wall, we want it to
-		// bounce back in the opposite direction without losing speed
+
+
 		enemy.body.bounce.x = 1;
 
 		// destroy the enemy after 15 seconds
@@ -247,22 +259,35 @@ class GameScene extends Phaser.Scene {
 
 		// we can't immediately restart the scene; otherwise our particles will disappear
 		// delete the player
-		this.player.destroy();
+		this.player.setVisible(false);
+		this.player.setActive(false);
 		// delete all the enemies
 		this.enemies.clear(true, true);
+
+		// TODO 7.4: decrement lives and update the lives label
+
+
+		// restart the scene after 1 second
 		this.time.addEvent({
 			delay: 1000,
-			callback: () => this.scene.restart()
+			callback: () => {
+				// TODO 7.5: we don't just want to restard, we want to change based on if we have lives left!! 
+				if (this.lives > 0) {
+					// TODO 7.6: set what we want to do if there are still lives left
+				} else {
+					// TODO 7.7: what do you want to do instead? maybe go back to welcomescene?
+				}
+			}
 		});
 	}
 }
-
 
 // TODO 3: Add WelcomeScene
 class WelcomeScene extends Phaser.Scene {
 	// you want a constructor(), preload(), and create() function
 
-	// TODO 4: Add a create() function that displays a welcome message, and commands to start the game. 
+	// TODO 4: Add a create() function that displays a welcome message.
+	// TODO 6: Add logic to start the game (switching scenes) to the create() function
 }
 
 // config! 
